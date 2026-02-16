@@ -1,60 +1,58 @@
-import { Link } from "react-router-dom";
-
-const games = [
-  { id: 1, name: "The Dutch Proverbs", image: "TheDutchProverbs.webp" },
-  { id: 2, name: "Children's Games", image: "TheElderChildrensGames.webp" },
-  {
-    id: 3,
-    name: "Garden of Earthly Delights",
-    image: "TheGardenofEarthlyDelights.jpg",
-  },
-  {
-    id: 4,
-    name: "Along the River During the Qingming Festival",
-    image: "AlongtheRiverDuringtheQingmingFestival.jpg",
-  },
-];
+import { useGames } from "../hooks/useGames";
+import GameCard from "../components/GameCard";
+import Loader from "../components/Loader";
+import ErrorMessage from "../components/ErrorMessage";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>🎨 Art Finder</h1>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "1.5rem",
-        }}
-      >
-        {games.map((game) => (
-          <Link
-            key={game.id}
-            to={`/game/${game.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <div
-              style={{
-                border: "1px solid #ddd",
-                padding: "1rem",
-                borderRadius: "12px",
-                transition: "0.2s",
-              }}
-            >
-              <img
-                src={`http://localhost:3000/images/${game.image}`}
-                alt={game.name}
-                style={{
-                  width: "100%",
-                  height: "200px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-              <h3 style={{ margin: "0.5rem 0 0" }}>{game.name}</h3>
-            </div>
-          </Link>
-        ))}
+  const { games, loading, error } = useGames();
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <Loader message="Chargement des jeux..." />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <ErrorMessage
+          message={`Erreur : ${error}`}
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
+
+  if (games.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.emptyState}>
+          <h2>No games available</h2>
+          <p>Come back later to discover new games!</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Art Finder</h1>
+        <p className={styles.subtitle}>
+          Find the hidden characters in these famous works of art
+        </p>
+      </header>
+
+      <main className={styles.main}>
+        <div className={styles.grid}>
+          {games.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </div>
+      </main>
     </div>
   );
 }

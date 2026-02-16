@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-2xl);
+  min-height: 400px;
+}
+
+.icon {
+  font-size: 3rem;
+}
+
+.message {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 0;
+  max-width: 500px;
+}
+
+.retryButton {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+}
+
+.retryButton:hover {
+  background-color: var(--color-accent-hover);
+}
