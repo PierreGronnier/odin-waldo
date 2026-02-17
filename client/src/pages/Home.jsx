@@ -10,7 +10,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className={styles.container}>
-        <Loader message="Chargement des jeux..." />
+        <Loader message="Loading games..." />
       </div>
     );
   }

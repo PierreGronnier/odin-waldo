@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import styles from "../styles/ImageViewer.module.css";
 
-const ImageViewer = ({ src, alt, onLoad, onClick }) => {
+const ImageViewer = ({ src, alt, onLoad, onClick, maxZoom = 5 }) => {
   const containerRef = useRef(null);
   const imageRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -11,7 +11,7 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageError, setImageError] = useState(false);
 
-  // Gérer le chargement de l'image
+  // Chargement / erreur
   const handleImageLoad = useCallback(() => {
     setIsLoading(false);
     onLoad?.();
@@ -26,92 +26,73 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
   const handleWheel = useCallback(
     (e) => {
       e.preventDefault();
-      const delta = e.deltaY * -0.001;
-      const newScale = Math.min(Math.max(0.5, scale + delta), 5);
-      setScale(newScale);
+      const delta = e.deltaY * -0.002;
+      setScale((prev) => Math.min(Math.max(prev + delta, 0.5), maxZoom));
     },
-    [scale],
+    [maxZoom],
   );
 
-  // Démarrer le drag
+  // Drag
   const handleMouseDown = useCallback(
     (e) => {
-      if (scale <= 1) return;
+      if (e.button !== 0 || scale <= 1) return;
       e.preventDefault();
       setIsDragging(true);
-      setDragStart({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y,
-      });
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
     },
     [scale, position],
   );
 
-  // Déplacer l'image
   const handleMouseMove = useCallback(
     (e) => {
       if (!isDragging) return;
-
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
+      setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
     },
     [isDragging, dragStart],
   );
 
-  // Arrêter le drag
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const handleMouseUp = useCallback(() => setIsDragging(false), []);
 
-  // Gérer le clic sur l'image (pour le gameplay)
-  const handleImageClick = useCallback(
+  // Clic droit pour coords
+  const handleContextMenu = useCallback(
     (e) => {
-      if (isDragging || scale > 1) return;
-
-      if (onClick) {
-        const rect = imageRef.current.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        onClick({ x, y });
-      }
+      e.preventDefault();
+      if (!onClick) return;
+      const rect = imageRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      onClick({ x, y });
     },
-    [isDragging, scale, onClick],
+    [onClick],
   );
 
   // Boutons de zoom
-  const zoomIn = () => setScale((prev) => Math.min(prev + 0.2, 5));
-  const zoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.5));
+  const zoomIn = () => setScale((prev) => Math.min(prev * 1.2, maxZoom));
+  const zoomOut = () => setScale((prev) => Math.max(prev / 1.2, 0.5));
   const resetZoom = () => {
     setScale(1);
     setPosition({ x: 0, y: 0 });
   };
 
-  // Réinitialiser la position si le zoom revient à 1
+  // Reset position si zoom = 1
   useEffect(() => {
-    if (scale === 1) {
-      setPosition({ x: 0, y: 0 });
-    }
+    if (scale === 1) setPosition({ x: 0, y: 0 });
   }, [scale]);
 
-  // Event listeners
+  // Wheel listener
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     container.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-    };
+    return () => container.removeEventListener("wheel", handleWheel);
   }, [handleWheel]);
 
+  // Drag listeners
   useEffect(() => {
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-
       return () => {
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseup", handleMouseUp);
@@ -120,7 +101,11 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div
+      className={styles.container}
+      ref={containerRef}
+      onContextMenu={handleContextMenu} // clic droit
+    >
       {/* Loading overlay */}
       {isLoading && (
         <div className={styles.loadingOverlay}>
@@ -141,10 +126,9 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
         className={styles.imageWrapper}
         style={{
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-          cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "crosshair",
+          cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
         }}
         onMouseDown={handleMouseDown}
-        onClick={handleImageClick}
       >
         <img
           ref={imageRef}
@@ -160,13 +144,13 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
 
       {/* Zoom controls */}
       <div className={styles.controls}>
-        <button onClick={zoomOut} disabled={scale <= 0.5} title="Zoom arrière">
+        <button onClick={zoomOut} disabled={scale <= 0.5} title="Zoom out">
           −
         </button>
-        <button onClick={resetZoom} title="Réinitialiser">
+        <button onClick={resetZoom} title="Reset">
           {Math.round(scale * 100)}%
         </button>
-        <button onClick={zoomIn} disabled={scale >= 5} title="Zoom avant">
+        <button onClick={zoomIn} disabled={scale >= maxZoom} title="Zoom in">
           +
         </button>
       </div>
@@ -174,7 +158,7 @@ const ImageViewer = ({ src, alt, onLoad, onClick }) => {
       {/* Instructions */}
       {!isLoading && !imageError && (
         <div className={styles.instructions}>
-          <p>Scroll wheel to zoom • Click and drag to move</p>
+          <p>Scroll wheel to zoom • Left-click drag • Right-click for coords</p>
         </div>
       )}
     </div>

@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGame } from "../hooks/useGames";
 import ImageViewer from "../components/ImageViewer";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
+import GameHeader from "../components/GameHeader";
+import GameSidebar from "../components/GameSidebar";
 import apiService from "../services/api";
 import styles from "../styles/Game.module.css";
 
@@ -11,9 +14,13 @@ export default function Game() {
   const navigate = useNavigate();
   const { game, loading, error } = useGame(id);
 
+  const [clickCoords, setClickCoords] = useState(null);
+
+  // Gestion du clic droit pour récupérer les coordonnées
   const handleImageClick = (coords) => {
     console.log("Clic aux coordonnées:", coords);
-    // TODO: Implémenter la logique de vérification des personnages
+    setClickCoords(coords);
+    // TODO: logique de vérification des personnages
   };
 
   if (loading) {
@@ -39,28 +46,18 @@ export default function Game() {
     );
   }
 
+  // Zoom augmenté pour le grand artwork
+  const maxZoom =
+    game.name === "Along the river during the Qingming festival" ? 45 : 5;
+
   return (
     <div className={styles.container}>
       {/* Header */}
-      <header className={styles.header}>
-        <button
-          onClick={() => navigate("/")}
-          className={styles.backButton}
-          title="Return to homepage"
-        >
-          ← Back
-        </button>
-        <div className={styles.gameInfo}>
-          <h1 className={styles.title}>{game.name}</h1>
-          {game.characters && (
-            <p className={styles.charactersCount}>
-              {game.characters.length} character
-              {game.characters.length > 1 ? "s" : ""} to find
-            </p>
-          )}
-        </div>
-        <div className={styles.placeholder}></div>
-      </header>
+      <GameHeader
+        game={game}
+        onBack={() => navigate("/")}
+        clickCoords={clickCoords}
+      />
 
       {/* Image Viewer */}
       <div className={styles.gameArea}>
@@ -68,21 +65,13 @@ export default function Game() {
           src={apiService.getImageUrl(game.imageUrl)}
           alt={game.name}
           onClick={handleImageClick}
+          maxZoom={maxZoom}
         />
       </div>
 
-      {/* Characters sidebar (optionnel pour l'instant) */}
+      {/* Sidebar */}
       {game.characters && game.characters.length > 0 && (
-        <aside className={styles.sidebar}>
-          <h3>Characters to find</h3>
-          <ul className={styles.characterList}>
-            {game.characters.map((character) => (
-              <li key={character.id} className={styles.characterItem}>
-                {character.name}
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <GameSidebar characters={game.characters} />
       )}
     </div>
   );

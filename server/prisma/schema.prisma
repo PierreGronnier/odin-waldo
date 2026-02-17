@@ -26,6 +26,7 @@ model Game {
 model Character {
   id        Int     @id @default(autoincrement())
   name      String
+  imageUrl  String? 
   x         Float   
   y         Float  
   game      Game    @relation(fields: [gameId], references: [id])

@@ -76,7 +76,7 @@
   padding: var(--spacing-sm);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  z-index: var(--z-dropdown);
+  z-index: var(--z-controls);
 }
 
 .controls button {

@@ -1,3 +1,4 @@
+/* Container principal */
 .container {
   display: flex;
   flex-direction: column;
@@ -6,6 +7,7 @@
   position: relative;
 }
 
+/* Header */
 .header {
   display: flex;
   align-items: center;
@@ -44,12 +46,14 @@
   width: 100px;
 }
 
+/* Zone de jeu */
 .gameArea {
   flex: 1;
   overflow: hidden;
   position: relative;
 }
 
+/* Loader et erreurs */
 .loadingContainer,
 .errorContainer {
   display: flex;
@@ -97,6 +101,35 @@
   border-color: var(--color-accent);
 }
 
+.characterWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease-in-out;
+  flex-wrap: wrap;
+}
+
+.characterImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.characterWrapper:hover .characterImage {
+  width: 100px;
+  height: 100px;
+}
+
+.characterName {
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .header {
     padding: var(--spacing-sm) var(--spacing-md);

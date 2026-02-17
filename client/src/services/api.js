@@ -1,11 +1,10 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000/api/games";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 class ApiService {
   // Récupérer tous les jeux
   async getGames() {
     try {
-      const response = await fetch(API_BASE_URL);
+      const response = await fetch(`${API_URL}/api/games`);
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des jeux");
       }
@@ -19,7 +18,7 @@ class ApiService {
   // Récupérer un jeu spécifique
   async getGame(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`);
+      const response = await fetch(`${API_URL}/api/games/${id}`);
       if (!response.ok) {
         throw new Error("Jeu non trouvé");
       }
@@ -32,7 +31,7 @@ class ApiService {
 
   // Construire l'URL d'une image
   getImageUrl(imagePath) {
-    return `http://localhost:3000/images/${imagePath}`;
+    return `${API_URL}/images/${imagePath}`;
   }
 }
 
