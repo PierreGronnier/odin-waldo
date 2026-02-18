@@ -17,7 +17,14 @@ async function getGameById(id) {
   });
 }
 
+async function getCharacterById(characterId) {
+  return await prisma.character.findUnique({
+    where: { id: Number(characterId) },
+  });
+}
+
 module.exports = {
   getAllGames,
   getGameById,
+  getCharacterById,
 };

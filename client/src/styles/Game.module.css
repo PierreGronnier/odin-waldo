@@ -129,6 +129,52 @@
   white-space: normal;
 }
 
+/* Character found state */
+.characterItem.found {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--color-success);
+}
+
+.characterItem.found .characterName {
+  color: var(--color-success);
+}
+
+.foundBadge {
+  color: var(--color-success);
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: auto;
+}
+
+.toast {
+  position: fixed;
+  bottom: var(--spacing-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  color: white;
+  font-weight: 500;
+  z-index: var(--z-tooltip);
+  animation: slideUp 0.3s ease-out;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.error {
+  background-color: var(--color-error);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .header {

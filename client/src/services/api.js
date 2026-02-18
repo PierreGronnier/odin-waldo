@@ -33,6 +33,23 @@ class ApiService {
   getImageUrl(imagePath) {
     return `${API_URL}/images/${imagePath}`;
   }
+
+  async verifyCharacter(gameId, characterId, x, y) {
+    try {
+      const response = await fetch(`${API_URL}/api/games/${gameId}/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ characterId, x, y }),
+      });
+      if (!response.ok) {
+        throw new Error("Erreur lors de la vérification");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Erreur API verifyCharacter:", error);
+      throw error;
+    }
+  }
 }
 
 export default new ApiService();
