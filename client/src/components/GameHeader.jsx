@@ -1,6 +1,11 @@
 import styles from "../styles/Game.module.css";
 
-export default function GameHeader({ game, onBack, clickCoords }) {
+export default function GameHeader({
+  game,
+  onBack,
+  clickCoords,
+  foundCharacters,
+}) {
   return (
     <header className={styles.header}>
       <button
@@ -16,8 +21,9 @@ export default function GameHeader({ game, onBack, clickCoords }) {
 
         {game.characters && (
           <p className={styles.charactersCount}>
-            {game.characters.length} character
-            {game.characters.length > 1 ? "s" : ""} to find
+            {game.characters.length - foundCharacters.length} character
+            {game.characters.length - foundCharacters.length > 1 ? "s" : ""} to
+            find
           </p>
         )}
 

@@ -1,20 +1,28 @@
+import { useState } from "react";
 import styles from "../styles/Game.module.css";
 import apiService from "../services/api";
+import CharacterInfo from "./CharacterInfo";
 
 export default function GameSidebar({ characters, foundCharacters = [] }) {
+  const [hoveredCharacterId, setHoveredCharacterId] = useState(null);
+
   if (!characters || characters.length === 0) return null;
 
   return (
     <aside className={styles.sidebar}>
-      <h3>Characters to find</h3>
+      <h3 className={styles.sidebarTitle}>Characters to find</h3>
 
       <ul className={styles.characterList}>
         {characters.map((character) => {
           const isFound = foundCharacters.includes(character.id);
+          const isHovered = hoveredCharacterId === character.id;
+
           return (
             <li
               key={character.id}
-              className={`${styles.characterItem} ${isFound ? styles.found : ""}`}
+              className={`${styles.characterItem} ${isFound ? styles.found : ""} ${isHovered ? styles.hovered : ""}`}
+              onMouseEnter={() => setHoveredCharacterId(character.id)}
+              onMouseLeave={() => setHoveredCharacterId(null)}
             >
               <div className={styles.characterWrapper}>
                 {character.imageUrl && (
@@ -27,6 +35,8 @@ export default function GameSidebar({ characters, foundCharacters = [] }) {
                 <span className={styles.characterName}>{character.name}</span>
                 {isFound && <span className={styles.foundBadge}>✓</span>}
               </div>
+
+              {isHovered && <CharacterInfo character={character} />}
             </li>
           );
         })}

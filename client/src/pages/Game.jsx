@@ -98,8 +98,10 @@ export default function Game() {
         game={game}
         onBack={() => navigate("/")}
         clickCoords={clickCoords}
+        foundCharacters={foundCharacters}
       />
 
+      {/* Image Viewer */}
       <div className={styles.gameArea}>
         <ImageViewer
           src={apiService.getImageUrl(game.imageUrl)}
