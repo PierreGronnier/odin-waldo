@@ -90,7 +90,7 @@ export default function Game() {
   }
 
   const maxZoom =
-    game.name === "Along the river during the Qingming festival" ? 45 : 5;
+    game.name === "Along the river during the Qingming festival" ? 45 : 7;
 
   return (
     <div className={styles.container} onContextMenu={handleContextMenu}>
