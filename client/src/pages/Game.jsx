@@ -117,6 +117,7 @@ export default function Game() {
         characters={game.characters || []}
         onSelect={handleCharacterSelect}
         onClose={handleCloseMenu}
+        foundCharacters={foundCharacters}
       />
 
       {verificationError && (

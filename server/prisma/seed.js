@@ -142,6 +142,50 @@ async function main() {
     data: {
       name: "Along the river during the Qingming festival",
       imageUrl: "AlongtheRiverDuringtheQingmingFestival/main.jpg",
+      characters: {
+        create: [
+          {
+            name: "Li the Launderer",
+            imageUrl: "AlongtheRiverDuringtheQingmingFestival/Li.png",
+            description:
+              "Dressed in a blue tunic, Li kneels by the riverbank using a wooden mallet to beat his laundry against a flat stone. A woven basket sits nearby, ready to carry his clean clothes back home.",
+            x: 28.76,
+            y: 69.3,
+          },
+          {
+            name: "Clumsy Chao",
+            imageUrl: "AlongtheRiverDuringtheQingmingFestival/Chao.png",
+            description:
+              "This unfortunate traveler has just tumbled off his donkey and lies sprawled on the ground. His hat has rolled away, and his donkey looks back in surprise at the sudden mess!",
+            x: 73.47,
+            y: 94.77,
+          },
+          {
+            name: "Master Wun",
+            imageUrl: "AlongtheRiverDuringtheQingmingFestival/Wun.png",
+            description:
+              "A bearded hermit sitting perfectly still amidst the city chaos, with a mysterious gourd by his side. Is he reaching deep spiritual enlightenment, or has he just had a bit too much rice wine?",
+            x: 63.27,
+            y: 76.01,
+          },
+          {
+            name: "The Stage Stealers (Long & Feng)",
+            imageUrl: "AlongtheRiverDuringtheQingmingFestival/Long.png",
+            description:
+              "Perched on their wooden platform, this dramatic pair performs a heated scene for the massive crowd. With their bright robes and grand gestures, they are the true stars of the riverbank!",
+            x: 83.39,
+            y: 62.64,
+          },
+          {
+            name: "Sleepy Song",
+            imageUrl: "AlongtheRiverDuringtheQingmingFestival/Song.png",
+            description:
+              "Tucked away under the shade of a large tree, Song has decided that the city's hustle is the perfect soundtrack for a nap. While everyone else rushes to trade and travel, he’s comfortably curled up on his mat, dreaming the day away!",
+            x: 36.36,
+            y: 70.07,
+          },
+        ],
+      },
     },
   });
 

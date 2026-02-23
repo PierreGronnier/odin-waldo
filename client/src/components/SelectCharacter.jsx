@@ -8,12 +8,16 @@ const SelectCharacter = ({
   characters,
   onSelect,
   onClose,
+  foundCharacters = [],
 }) => {
   const menuRef = useRef(null);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [menuStyle, setMenuStyle] = useState({});
 
-  // Calcule la position du menu
+  const availableCharacters = characters?.filter(
+    (c) => !foundCharacters.includes(c.id),
+  );
+
   useEffect(() => {
     if (!isOpen || !menuRef.current) return;
 
@@ -62,8 +66,8 @@ const SelectCharacter = ({
         </div>
 
         <div className={styles.characterList}>
-          {characters?.length > 0 ? (
-            characters.map((character) => (
+          {availableCharacters?.length > 0 ? (
+            availableCharacters.map((character) => (
               <button
                 key={character.id}
                 className={`${styles.characterItem} ${
