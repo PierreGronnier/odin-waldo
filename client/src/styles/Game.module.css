@@ -42,11 +42,35 @@
   margin: 0;
 }
 
-.placeholder {
-  width: 100px;
+/* Timer */
+.timerDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 100px;
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-md);
 }
 
-/* Zone de jeu */
+.timerLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+}
+
+.timerValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+  letter-spacing: 0.05em;
+}
+
+/* Game area */
 .gameArea {
   flex: 1;
   overflow: hidden;
@@ -62,10 +86,10 @@
   height: 100vh;
 }
 
-/* Sidebar personnages */
+/* Sidebar */
 .sidebar {
   position: fixed;
-  top: 70px;
+  top: 86px;
   right: 0;
   width: 250px;
   height: calc(100vh - 70px);
@@ -76,7 +100,7 @@
   z-index: var(--z-dropdown);
 }
 
-.sidebar h3 {
+.sidebarTitle {
   font-size: 1.1rem;
   margin-bottom: var(--spacing-md);
   color: var(--color-text-primary);
@@ -118,7 +142,7 @@
 }
 
 .characterImage {
-  width: 80px; /* Taille de base équilibrée */
+  width: 80px;
   height: 80px;
   object-fit: cover;
   border-radius: 10px;
@@ -127,7 +151,7 @@
 }
 
 .characterItem.hovered .characterImage {
-  width: 120px; /* Taille au survol équilibrée */
+  width: 120px;
   height: 120px;
   border-color: var(--color-accent);
 }
@@ -144,7 +168,6 @@
   font-size: 1.1rem;
 }
 
-/* Character found state */
 .characterItem.found {
   background-color: rgba(16, 185, 129, 0.08);
   border-color: var(--color-success);
@@ -159,7 +182,7 @@
   font-size: 1.1rem;
 }
 
-/* Toast */
+/* Toast notifications */
 .toast {
   position: fixed;
   bottom: var(--spacing-xl);
@@ -170,6 +193,10 @@
   color: white;
   z-index: var(--z-tooltip);
   animation: slideUp 0.3s ease-out;
+}
+
+.toast.error {
+  background-color: var(--color-error);
 }
 
 @keyframes slideUp {
@@ -186,5 +213,13 @@
 @media (max-width: 768px) {
   .sidebar {
     display: none;
+  }
+
+  .timerDisplay {
+    min-width: 80px;
+  }
+
+  .timerValue {
+    font-size: 0.95rem;
   }
 }

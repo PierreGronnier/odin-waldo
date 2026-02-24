@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGame } from "../hooks/useGames";
+import { useDisplayTimer } from "../hooks/useTimer";
+import { useCompletedGames } from "../hooks/useCompletedGames.js";
 import ImageViewer from "../components/ImageViewer";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import GameHeader from "../components/GameHeader";
 import GameSidebar from "../components/GameSidebar";
 import SelectCharacter from "../components/SelectCharacter";
+import VictoryModal from "../components/VictoryModal";
 import apiService from "../services/api";
 import styles from "../styles/Game.module.css";
 
@@ -14,12 +17,63 @@ export default function Game() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { game, loading, error } = useGame(id);
+  const { displayMs, stop: stopDisplay } = useDisplayTimer();
+  const { markGameCompleted } = useCompletedGames();
+
+  const sessionIdRef = useRef(null);
+  const sessionStartedRef = useRef(false);
 
   const [clickCoords, setClickCoords] = useState(null);
   const [isSelectMenuOpen, setIsSelectMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [foundCharacters, setFoundCharacters] = useState([]);
   const [verificationError, setVerificationError] = useState(null);
+  const [showVictory, setShowVictory] = useState(false);
+  const [finalTime, setFinalTime] = useState(0);
+
+  // Start server session once game is loaded
+  useEffect(() => {
+    if (!game || sessionStartedRef.current) return;
+    sessionStartedRef.current = true;
+
+    apiService
+      .startSession(game.id)
+      .then((session) => {
+        sessionIdRef.current = session.id;
+      })
+      .catch((err) => {
+        console.error("Could not start session:", err);
+      });
+  }, [game]);
+
+  // Check win condition
+  useEffect(() => {
+    if (!game || foundCharacters.length === 0) return;
+    if (foundCharacters.length !== game.characters.length) return;
+
+    stopDisplay();
+
+    const sessionId = sessionIdRef.current;
+    if (!sessionId) {
+      // Fallback: use display time if session failed to start
+      setFinalTime(displayMs);
+      setTimeout(() => setShowVictory(true), 600);
+      return;
+    }
+
+    // Get authoritative time from server
+    apiService
+      .finishSession(game.id, sessionId)
+      .then(({ timeInMs }) => {
+        setFinalTime(timeInMs);
+        setTimeout(() => setShowVictory(true), 600);
+      })
+      .catch(() => {
+        // Fallback to display time on network error
+        setFinalTime(displayMs);
+        setTimeout(() => setShowVictory(true), 600);
+      });
+  }, [foundCharacters, game]);
 
   const handleImageClick = (coords) => {
     setClickCoords(coords);
@@ -33,9 +87,8 @@ export default function Game() {
   };
 
   const handleCharacterSelect = async (character) => {
-    // Vérifier si déjà trouvé
     if (foundCharacters.includes(character.id)) {
-      setVerificationError("You already found this character!");
+      setVerificationError("Already found!");
       setTimeout(() => setIsSelectMenuOpen(false), 1000);
       return;
     }
@@ -51,19 +104,23 @@ export default function Game() {
         setFoundCharacters((prev) => [...prev, character.id]);
         setVerificationError(null);
       } else {
-        setVerificationError("Wrong character or incorrect position!");
+        setVerificationError("Wrong spot — try again!");
       }
-    } catch (err) {
+    } catch {
       setVerificationError("Verification failed. Please try again.");
     }
 
-    setTimeout(() => {
-      setIsSelectMenuOpen(false);
-    }, 1000);
+    setTimeout(() => setIsSelectMenuOpen(false), 1000);
   };
 
-  const handleCloseMenu = () => {
-    setIsSelectMenuOpen(false);
+  const handleScoreSubmit = async (playerName) => {
+    await apiService.submitScore(Number(id), playerName, finalTime);
+    markGameCompleted(id);
+  };
+
+  const handleVictoryClose = () => {
+    markGameCompleted(id);
+    navigate("/");
   };
 
   if (loading) {
@@ -97,11 +154,10 @@ export default function Game() {
       <GameHeader
         game={game}
         onBack={() => navigate("/")}
-        clickCoords={clickCoords}
         foundCharacters={foundCharacters}
+        elapsedMs={displayMs}
       />
 
-      {/* Image Viewer */}
       <div className={styles.gameArea}>
         <ImageViewer
           src={apiService.getImageUrl(game.imageUrl)}
@@ -116,7 +172,7 @@ export default function Game() {
         position={menuPosition}
         characters={game.characters || []}
         onSelect={handleCharacterSelect}
-        onClose={handleCloseMenu}
+        onClose={() => setIsSelectMenuOpen(false)}
         foundCharacters={foundCharacters}
       />
 
@@ -130,6 +186,14 @@ export default function Game() {
         <GameSidebar
           characters={game.characters}
           foundCharacters={foundCharacters}
+        />
+      )}
+
+      {showVictory && (
+        <VictoryModal
+          timeInMs={finalTime}
+          onSubmit={handleScoreSubmit}
+          onSkip={handleVictoryClose}
         />
       )}
     </div>

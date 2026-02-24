@@ -1,0 +1,224 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.backButton {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.titleGroup {
+  text-align: center;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin: 0;
+  background: linear-gradient(135deg, var(--color-accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: var(--spacing-xs) 0 0;
+}
+
+.placeholder {
+  width: 100px;
+}
+
+.main {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  flex: 1;
+  min-width: 140px;
+}
+
+.tab:hover {
+  border-color: var(--color-border-hover);
+}
+
+.activeTab {
+  border-color: var(--color-accent);
+  background-color: rgba(100, 108, 255, 0.08);
+}
+
+.tabName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.activeTab .tabName {
+  color: var(--color-accent);
+}
+
+.tabCount {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* Score board */
+.scoreBoard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gameName {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-tertiary);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl);
+  color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+}
+
+.scoreList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scoreRow {
+  display: grid;
+  grid-template-columns: 48px 1fr auto auto;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+.scoreRow:last-child {
+  border-bottom: none;
+}
+
+.scoreRow:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Top 3 highlights */
+.rank1 {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.06), transparent);
+}
+.rank2 {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.06), transparent);
+}
+.rank3 {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.06), transparent);
+}
+
+.rank {
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.playerName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time {
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: var(--spacing-md);
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab {
+    min-width: unset;
+  }
+
+  .scoreRow {
+    grid-template-columns: 40px 1fr auto;
+    padding: var(--spacing-md);
+  }
+
+  .date {
+    display: none;
+  }
+
+  .gameName {
+    padding: var(--spacing-md);
+  }
+}

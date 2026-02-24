@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const gamesRoute = require("./routes/gamesRoute");
-const adminRoute = require("./routes/adminRoute");
+const scoresRoute = require("./routes/scoresRoute");
+const sessionsRoute = require("./routes/sessionsRoute");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/games", gamesRoute);
-app.use("/api/admin", adminRoute);
+app.use("/api/scores", scoresRoute);
+app.use("/api/games/:id/sessions", sessionsRoute);
 
 module.exports = app;

@@ -50,6 +50,62 @@ class ApiService {
       throw error;
     }
   }
+
+  async getLeaderboard() {
+    try {
+      const response = await fetch(`${API_URL}/api/scores?limit=10`);
+      if (!response.ok) throw new Error("Failed to fetch leaderboard");
+      return await response.json();
+    } catch (error) {
+      console.error("API getLeaderboard:", error);
+      throw error;
+    }
+  }
+
+  async submitScore(gameId, playerName, timeInMs) {
+    try {
+      const response = await fetch(`${API_URL}/api/scores/${gameId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerName, timeInMs }),
+      });
+      if (!response.ok) throw new Error("Failed to submit score");
+      return await response.json();
+    } catch (error) {
+      console.error("API submitScore:", error);
+      throw error;
+    }
+  }
+
+  //  Start a server-side session — returns { id, startedAt }
+  async startSession(gameId) {
+    try {
+      const response = await fetch(`${API_URL}/api/games/${gameId}/sessions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to start session");
+      return await response.json();
+    } catch (error) {
+      console.error("API startSession:", error);
+      throw error;
+    }
+  }
+
+  // Finish a session — returns { timeInMs } computed by the server
+  async finishSession(gameId, sessionId) {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/games/${gameId}/sessions/${sessionId}/finish`,
+        { method: "POST", headers: { "Content-Type": "application/json" } },
+      );
+      if (!response.ok) throw new Error("Failed to finish session");
+      return await response.json();
+    } catch (error) {
+      console.error("API finishSession:", error);
+      throw error;
+    }
+  }
 }
 
 export default new ApiService();
