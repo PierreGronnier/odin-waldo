@@ -15,7 +15,7 @@ const SelectCharacter = ({
   const [menuStyle, setMenuStyle] = useState({});
 
   const availableCharacters = characters?.filter(
-    (c) => !foundCharacters.includes(c.id),
+    (c) => !foundCharacters.some((fc) => fc.id === c.id),
   );
 
   useEffect(() => {

@@ -15,6 +15,8 @@
   will-change: transform;
   user-select: none;
   -webkit-user-select: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .image {
@@ -24,6 +26,11 @@
   height: auto;
   display: block;
   object-fit: contain;
+  image-rendering: pixelated;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Loading state */
@@ -130,11 +137,40 @@
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-lg);
   font-size: 0.8rem;
-  line-height: 1; /* supprime l'espace résiduel */
+  line-height: 1;
   z-index: var(--z-dropdown);
   pointer-events: none;
   white-space: nowrap;
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* marker for the map when character is found */
+.markersLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.mapMarker {
+  position: absolute;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {

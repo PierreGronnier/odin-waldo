@@ -87,7 +87,7 @@ export default function Game() {
   };
 
   const handleCharacterSelect = async (character) => {
-    if (foundCharacters.includes(character.id)) {
+    if (foundCharacters.some((c) => c.id === character.id)) {
       setVerificationError("Already found!");
       setTimeout(() => setIsSelectMenuOpen(false), 1000);
       return;
@@ -100,9 +100,23 @@ export default function Game() {
         clickCoords.x,
         clickCoords.y,
       );
+
       if (result.success) {
-        setFoundCharacters((prev) => [...prev, character.id]);
         setVerificationError(null);
+
+        setTimeout(() => {
+          setIsSelectMenuOpen(false);
+          setFoundCharacters((prev) => [
+            ...prev,
+            {
+              id: character.id,
+              x: clickCoords.x,
+              y: clickCoords.y,
+            },
+          ]);
+        }, 1000);
+
+        return;
       } else {
         setVerificationError("Wrong spot — try again!");
       }
@@ -146,8 +160,10 @@ export default function Game() {
     );
   }
 
-  const maxZoom =
-    game.name === "Along the river during the Qingming festival" ? 45 : 7;
+  const isQingming =
+    game.name === "Along the river during the Qingming festival";
+  const maxZoom = isQingming ? 45 : 7;
+  const markerBaseSize = isQingming ? 20 : 30;
 
   return (
     <div className={styles.container} onContextMenu={handleContextMenu}>
@@ -164,6 +180,8 @@ export default function Game() {
           alt={game.name}
           onClick={handleImageClick}
           maxZoom={maxZoom}
+          markers={foundCharacters}
+          markerBaseSize={markerBaseSize}
         />
       </div>
 

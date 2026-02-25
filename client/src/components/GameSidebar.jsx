@@ -14,7 +14,7 @@ export default function GameSidebar({ characters, foundCharacters = [] }) {
 
       <ul className={styles.characterList}>
         {characters.map((character) => {
-          const isFound = foundCharacters.includes(character.id);
+          const isFound = foundCharacters.some((c) => c.id === character.id);
           const isHovered = hoveredCharacterId === character.id;
 
           return (
