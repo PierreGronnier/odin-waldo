@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGame } from "../hooks/useGames";
-import { useDisplayTimer } from "../hooks/useTimer";
 import { useCompletedGames } from "../hooks/useCompletedGames.js";
 import ImageViewer from "../components/ImageViewer";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import GameHeader from "../components/GameHeader";
+import GameTimer from "../components/GameTimer";
 import GameSidebar from "../components/GameSidebar";
 import SelectCharacter from "../components/SelectCharacter";
 import VictoryModal from "../components/VictoryModal";
@@ -17,8 +17,9 @@ export default function Game() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { game, loading, error } = useGame(id);
-  const { displayMs, stop: stopDisplay } = useDisplayTimer();
   const { markGameCompleted } = useCompletedGames();
+
+  const stopTimerRef = useRef(null);
 
   const sessionIdRef = useRef(null);
   const sessionStartedRef = useRef(false);
@@ -31,7 +32,6 @@ export default function Game() {
   const [showVictory, setShowVictory] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
 
-  // Start server session once game is loaded
   useEffect(() => {
     if (!game || sessionStartedRef.current) return;
     sessionStartedRef.current = true;
@@ -51,17 +51,15 @@ export default function Game() {
     if (!game || foundCharacters.length === 0) return;
     if (foundCharacters.length !== game.characters.length) return;
 
-    stopDisplay();
+    const localMs = stopTimerRef.current?.() ?? 0;
 
     const sessionId = sessionIdRef.current;
     if (!sessionId) {
-      // Fallback: use display time if session failed to start
-      setFinalTime(displayMs);
+      setFinalTime(localMs);
       setTimeout(() => setShowVictory(true), 600);
       return;
     }
 
-    // Get authoritative time from server
     apiService
       .finishSession(game.id, sessionId)
       .then(({ timeInMs }) => {
@@ -69,73 +67,79 @@ export default function Game() {
         setTimeout(() => setShowVictory(true), 600);
       })
       .catch(() => {
-        // Fallback to display time on network error
-        setFinalTime(displayMs);
+        setFinalTime(localMs);
         setTimeout(() => setShowVictory(true), 600);
       });
   }, [foundCharacters, game]);
 
-  const handleImageClick = (coords) => {
+  const handleImageClick = useCallback((coords) => {
     setClickCoords(coords);
     setIsSelectMenuOpen(true);
     setVerificationError(null);
-  };
+  }, []);
 
-  const handleContextMenu = (e) => {
+  const handleContextMenu = useCallback((e) => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
-  };
+  }, []);
 
-  const handleCharacterSelect = async (character) => {
-    if (foundCharacters.some((c) => c.id === character.id)) {
-      setVerificationError("Already found!");
-      setTimeout(() => setIsSelectMenuOpen(false), 1000);
-      return;
-    }
+  const handleCloseSelect = useCallback(() => {
+    setIsSelectMenuOpen(false);
+  }, []);
 
-    try {
-      const result = await apiService.verifyCharacter(
-        id,
-        character.id,
-        clickCoords.x,
-        clickCoords.y,
-      );
-
-      if (result.success) {
-        setVerificationError(null);
-
-        setTimeout(() => {
-          setIsSelectMenuOpen(false);
-          setFoundCharacters((prev) => [
-            ...prev,
-            {
-              id: character.id,
-              x: clickCoords.x,
-              y: clickCoords.y,
-            },
-          ]);
-        }, 1000);
-
+  const handleCharacterSelect = useCallback(
+    async (character) => {
+      if (foundCharacters.some((c) => c.id === character.id)) {
+        setVerificationError("Already found!");
+        setTimeout(() => setIsSelectMenuOpen(false), 1000);
         return;
-      } else {
-        setVerificationError("Wrong spot — try again!");
       }
-    } catch {
-      setVerificationError("Verification failed. Please try again.");
-    }
 
-    setTimeout(() => setIsSelectMenuOpen(false), 1000);
-  };
+      try {
+        const result = await apiService.verifyCharacter(
+          id,
+          character.id,
+          clickCoords.x,
+          clickCoords.y,
+        );
 
-  const handleScoreSubmit = async (playerName) => {
-    await apiService.submitScore(Number(id), playerName, finalTime);
-    markGameCompleted(id);
-  };
+        if (result.success) {
+          setVerificationError(null);
+          setTimeout(() => {
+            setIsSelectMenuOpen(false);
+            setFoundCharacters((prev) => [
+              ...prev,
+              { id: character.id, x: clickCoords.x, y: clickCoords.y },
+            ]);
+          }, 1000);
+          return;
+        } else {
+          setVerificationError("Wrong spot — try again!");
+        }
+      } catch {
+        setVerificationError("Verification failed. Please try again.");
+      }
 
-  const handleVictoryClose = () => {
+      setTimeout(() => setIsSelectMenuOpen(false), 1000);
+    },
+    [foundCharacters, id, clickCoords],
+  );
+
+  const handleScoreSubmit = useCallback(
+    async (playerName) => {
+      await apiService.submitScore(Number(id), playerName, finalTime);
+      markGameCompleted(id);
+    },
+    [id, finalTime, markGameCompleted],
+  );
+
+  const handleVictoryClose = useCallback(() => {
     markGameCompleted(id);
     navigate("/");
-  };
+  }, [id, markGameCompleted, navigate]);
+
+  const handleBack = useCallback(() => navigate("/"), [navigate]);
+  const timerSlot = useMemo(() => <GameTimer onStop={stopTimerRef} />, []);
 
   if (loading) {
     return (
@@ -161,7 +165,7 @@ export default function Game() {
   }
 
   const isQingming =
-    game.name === "Along the river during the Qingming festival";
+    game.name === "Along the River During the Qingming Festival";
   const maxZoom = isQingming ? 45 : 7;
   const markerBaseSize = isQingming ? 20 : 30;
 
@@ -169,9 +173,9 @@ export default function Game() {
     <div className={styles.container} onContextMenu={handleContextMenu}>
       <GameHeader
         game={game}
-        onBack={() => navigate("/")}
+        onBack={handleBack}
         foundCharacters={foundCharacters}
-        elapsedMs={displayMs}
+        timerSlot={timerSlot}
       />
 
       <div className={styles.gameArea}>
@@ -190,7 +194,7 @@ export default function Game() {
         position={menuPosition}
         characters={game.characters || []}
         onSelect={handleCharacterSelect}
-        onClose={() => setIsSelectMenuOpen(false)}
+        onClose={handleCloseSelect}
         foundCharacters={foundCharacters}
       />
 

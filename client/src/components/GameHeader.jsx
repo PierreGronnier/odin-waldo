@@ -1,11 +1,11 @@
-import { formatTime } from "../hooks/useTimer";
+import { memo } from "react";
 import styles from "../styles/Game.module.css";
 
-export default function GameHeader({
+const GameHeader = memo(function GameHeader({
   game,
   onBack,
   foundCharacters,
-  elapsedMs,
+  timerSlot,
 }) {
   const remaining = game.characters
     ? game.characters.length - foundCharacters.length
@@ -28,10 +28,9 @@ export default function GameHeader({
         </p>
       </div>
 
-      <div className={styles.timerDisplay}>
-        <span className={styles.timerLabel}>Time</span>
-        <span className={styles.timerValue}>{formatTime(elapsedMs)}</span>
-      </div>
+      {timerSlot}
     </header>
   );
-}
+});
+
+export default GameHeader;

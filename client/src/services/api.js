@@ -34,6 +34,12 @@ class ApiService {
     return `${API_URL}/images/${imagePath}`;
   }
 
+  // Miniature pour la page HOME
+  getThumbUrl(imagePath) {
+    const folder = imagePath.substring(0, imagePath.lastIndexOf("/"));
+    return `${API_URL}/images/${folder}/thumb.jpg`;
+  }
+
   async verifyCharacter(gameId, characterId, x, y) {
     try {
       const response = await fetch(`${API_URL}/api/games/${gameId}/verify`, {

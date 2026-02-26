@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const gamesRoute = require("./routes/gamesRoute");
 const scoresRoute = require("./routes/scoresRoute");
 const sessionsRoute = require("./routes/sessionsRoute");
@@ -10,15 +9,28 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   }),
 );
 app.use(express.json());
 
-app.use("/images", express.static("public/images"));
+app.use(
+  "/images",
+  express.static("public/images", {
+    maxAge: "7d",
+    etag: true,
+    lastModified: true,
+    setHeaders(res) {
+      res.setHeader(
+        "Cache-Control",
+        "public, max-age=604800, stale-while-revalidate=86400",
+      );
+    },
+  }),
+);
 
-// Route test
+// Route health check
 app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
 });

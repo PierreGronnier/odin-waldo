@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useGames } from "../hooks/useGames";
 import { useCompletedGames } from "../hooks/useCompletedGames.js";
 import GameCard from "../components/GameCard";
+import PaintingInfo from "../components/PaintingInfo";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import artFinderIcon from "../assets/artFinder.png";
@@ -67,6 +68,7 @@ export default function Home() {
           {games.map((game) => (
             <div key={game.id} className={styles.cardWrapper}>
               <GameCard game={game} />
+              <PaintingInfo game={game} />
               {isGameCompleted(game.id) && (
                 <div className={styles.completedBadge}>
                   <span className={styles.completedIcon}>✓</span>

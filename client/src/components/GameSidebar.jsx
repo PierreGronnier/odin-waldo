@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import styles from "../styles/Game.module.css";
 import apiService from "../services/api";
 import CharacterInfo from "./CharacterInfo";
 
-export default function GameSidebar({ characters, foundCharacters = [] }) {
+const GameSidebar = memo(function GameSidebar({
+  characters,
+  foundCharacters = [],
+}) {
   const [hoveredCharacterId, setHoveredCharacterId] = useState(null);
 
   if (!characters || characters.length === 0) return null;
@@ -43,4 +46,6 @@ export default function GameSidebar({ characters, foundCharacters = [] }) {
       </ul>
     </aside>
   );
-}
+});
+
+export default GameSidebar;

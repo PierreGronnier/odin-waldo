@@ -6,8 +6,19 @@ import styles from "../styles/GameCard.module.css";
 const GameCard = ({ game }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
 
-  const imageUrl = apiService.getImageUrl(game.imageUrl);
+  const thumbUrl = apiService.getThumbUrl(game.imageUrl);
+  const fullUrl = apiService.getImageUrl(game.imageUrl);
+  const imageUrl = useFallback ? fullUrl : thumbUrl;
+
+  const handleError = () => {
+    if (!useFallback) {
+      setUseFallback(true);
+    } else {
+      setHasError(true);
+    }
+  };
 
   return (
     <Link to={`/game/${game.id}`} className={styles.card}>
@@ -19,14 +30,14 @@ const GameCard = ({ game }) => {
         )}
 
         {hasError ? (
-          <div className={styles.imageError}>❌</div>
+          <div className={styles.imageError}>X</div>
         ) : (
           <img
             src={imageUrl}
             alt={game.name}
             className={styles.image}
             onLoad={() => setIsImageLoaded(true)}
-            onError={() => setHasError(true)}
+            onError={handleError}
             loading="lazy"
             style={{ opacity: isImageLoaded ? 1 : 0 }}
           />

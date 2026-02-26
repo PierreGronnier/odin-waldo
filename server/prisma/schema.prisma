@@ -17,6 +17,7 @@ model Game {
   id          Int          @id @default(autoincrement())
   name        String
   imageUrl    String
+  description String?
   characters  Character[]
   scores      Score[]
   sessions    GameSession[]

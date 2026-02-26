@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import apiService from "../services/api";
 import styles from "../styles/SelectCharacter.module.css";
 
-const SelectCharacter = ({
+const SelectCharacter = memo(function SelectCharacter({
   isOpen,
   position,
   characters,
   onSelect,
   onClose,
   foundCharacters = [],
-}) => {
+}) {
   const menuRef = useRef(null);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [menuStyle, setMenuStyle] = useState({});
@@ -101,6 +101,6 @@ const SelectCharacter = ({
       <div className={styles.overlay} onClick={onClose} />
     </>
   );
-};
+});
 
 export default SelectCharacter;
