@@ -14,21 +14,6 @@ app.use(
 );
 app.use(express.json());
 
-app.use(
-  "/images",
-  express.static("public/images", {
-    maxAge: "7d",
-    etag: true,
-    lastModified: true,
-    setHeaders(res) {
-      res.setHeader(
-        "Cache-Control",
-        "public, max-age=604800, stale-while-revalidate=86400",
-      );
-    },
-  }),
-);
-
 // Route health check
 app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
