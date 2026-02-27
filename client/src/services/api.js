@@ -31,7 +31,6 @@ class ApiService {
 
   // Construire l'URL d'une image
   getImageUrl(imagePath) {
-    // Remplace .png par .PNG à la fin
     const correctedPath = imagePath.replace(/\.png$/, ".PNG");
     return `/images/${correctedPath}`;
   }
