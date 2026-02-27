@@ -30,7 +30,11 @@ const GameSidebar = memo(function GameSidebar({
               <div className={styles.characterWrapper}>
                 {character.imageUrl && (
                   <img
-                    src={apiService.getImageUrl(character.imageUrl)}
+                    src={(() => {
+                      const url = apiService.getImageUrl(character.imageUrl);
+                      console.log("URL générée:", url);
+                      return url;
+                    })()}
                     alt={character.name}
                     className={styles.characterImage}
                   />

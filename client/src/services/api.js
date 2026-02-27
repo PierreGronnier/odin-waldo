@@ -31,13 +31,14 @@ class ApiService {
 
   // Construire l'URL d'une image
   getImageUrl(imagePath) {
-    return `${API_URL}/images/${imagePath}`;
+    // Remplace .png par .PNG à la fin
+    const correctedPath = imagePath.replace(/\.png$/, ".PNG");
+    return `/images/${correctedPath}`;
   }
 
   // Miniature pour la page HOME
   getThumbUrl(imagePath) {
-    const folder = imagePath.substring(0, imagePath.lastIndexOf("/"));
-    return `${API_URL}/images/${folder}/thumb.jpg`;
+    return `/images/${imagePath.replace(/main\..+$/, "thumb.jpg")}`;
   }
 
   async verifyCharacter(gameId, characterId, x, y) {
