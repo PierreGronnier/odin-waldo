@@ -309,6 +309,13 @@ const ImageViewer = memo(function ImageViewer({
         ))}
       </div>
 
+      <div className={styles.instructions}>
+        <p>
+          {" "}
+          Left-click: drag • Scroll: zoom • Right-click: select a character
+        </p>
+      </div>
+
       <div className={styles.controls}>
         <button onClick={zoomOutBtn} disabled={displayScale <= MIN_SCALE}>
           −

@@ -3,7 +3,7 @@
   background-color: var(--color-bg-primary);
 }
 
-/* Header — position relative pour ancrer le bouton leaderboard */
+/* Header */
 .header {
   position: relative;
   padding: var(--spacing-2xl) var(--spacing-xl);
@@ -11,11 +11,10 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Bouton leaderboard ancré en haut à droite du header */
-.leaderboardLink {
+/* Boutons GitHub et Leaderboard — style commun */
+.headerButton {
   position: absolute;
   top: var(--spacing-lg);
-  right: var(--spacing-xl);
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -28,12 +27,30 @@
   font-weight: 600;
   text-decoration: none;
   transition: all var(--transition-fast);
+  z-index: 10;
 }
 
-.leaderboardLink:hover {
+.headerButton:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
   transform: translateY(-1px);
+}
+
+/* Bouton à gauche made by et logo github */
+.leftButton {
+  left: var(--spacing-xl);
+}
+
+.rightButton {
+  right: var(--spacing-xl);
+}
+
+.githubIcon {
+  width: 22px;
+  height: 22px;
+  margin-right: 5px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 /* Icône + titre côte à côte, centrés */
@@ -130,17 +147,17 @@
   margin-bottom: var(--spacing-md);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .header {
     padding: var(--spacing-xl) var(--spacing-md);
     padding-top: calc(var(--spacing-xl) + 44px);
   }
 
-  .leaderboardLink {
+  .headerButton {
     top: var(--spacing-md);
-    right: var(--spacing-md);
-    font-size: 0.85rem;
     padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.85rem;
   }
 
   .icon {

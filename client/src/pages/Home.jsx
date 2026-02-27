@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import artFinderIcon from "../assets/artFinder.png";
 import styles from "../styles/Home.module.css";
+import githubLogo from "../assets/github.png";
 
 export default function Home() {
   const { games, loading, error } = useGames();
@@ -45,9 +46,15 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link to="/leaderboard" className={styles.leaderboardLink}>
-          🏆 Leaderboard
-        </Link>
+        <a
+          href="https://github.com/PierreGronnier"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${styles.headerButton} ${styles.leftButton}`}
+        >
+          <img src={githubLogo} alt="GitHub" className={styles.githubIcon} />
+          Made by Pierre Gronnier
+        </a>
 
         <div className={styles.titleGroup}>
           <img
@@ -57,6 +64,13 @@ export default function Home() {
           />
           <h1 className={styles.title}>Art Finder</h1>
         </div>
+
+        <Link
+          to="/leaderboard"
+          className={`${styles.headerButton} ${styles.rightButton}`}
+        >
+          🏆 Leaderboard
+        </Link>
 
         <p className={styles.subtitle}>
           Find the hidden characters in these famous works of art

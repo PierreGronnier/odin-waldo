@@ -166,7 +166,7 @@ export default function Game() {
 
   const isQingming =
     game.name === "Along the River During the Qingming Festival";
-  const maxZoom = isQingming ? 45 : 7;
+  const maxZoom = isQingming ? 45 : 5;
   const markerBaseSize = isQingming ? 20 : 30;
 
   return (
