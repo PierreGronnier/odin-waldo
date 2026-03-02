@@ -18,8 +18,18 @@ const GameTimer = ({ isRunning = true, onStop }) => {
     }
   }, [onStop]);
 
+  // Gère le démarrage/l'arrêt du timer selon isRunning
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isRunning) {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+      return;
+    }
+
+    // Reset du départ quand on redémarre
+    startRef.current = Date.now();
 
     const tick = () => {
       if (spanRef.current) {
@@ -29,7 +39,13 @@ const GameTimer = ({ isRunning = true, onStop }) => {
     };
 
     frameRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameRef.current);
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
   }, [isRunning]);
 
   return (

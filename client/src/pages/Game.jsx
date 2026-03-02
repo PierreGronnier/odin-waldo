@@ -31,6 +31,7 @@ export default function Game() {
   const [verificationError, setVerificationError] = useState(null);
   const [showVictory, setShowVictory] = useState(false);
   const [finalTime, setFinalTime] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (!game || sessionStartedRef.current) return;
@@ -107,10 +108,13 @@ export default function Game() {
           setVerificationError(null);
           setTimeout(() => {
             setIsSelectMenuOpen(false);
-            setFoundCharacters((prev) => [
-              ...prev,
-              { id: character.id, x: clickCoords.x, y: clickCoords.y },
-            ]);
+            setFoundCharacters((prev) => {
+              if (prev.some((c) => c.id === character.id)) return prev;
+              return [
+                ...prev,
+                { id: character.id, x: clickCoords.x, y: clickCoords.y },
+              ];
+            });
           }, 1000);
           return;
         } else {
@@ -139,7 +143,10 @@ export default function Game() {
   }, [id, markGameCompleted, navigate]);
 
   const handleBack = useCallback(() => navigate("/"), [navigate]);
-  const timerSlot = useMemo(() => <GameTimer onStop={stopTimerRef} />, []);
+  const timerSlot = useMemo(
+    () => <GameTimer onStop={stopTimerRef} isRunning={imageLoaded} />,
+    [imageLoaded],
+  );
 
   if (loading) {
     return (
@@ -186,6 +193,7 @@ export default function Game() {
           maxZoom={maxZoom}
           markers={foundCharacters}
           markerBaseSize={markerBaseSize}
+          onImageLoad={() => setImageLoaded(true)}
         />
       </div>
 

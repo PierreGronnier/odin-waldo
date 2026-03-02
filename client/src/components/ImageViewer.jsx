@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect, memo } from "react";
 import styles from "../styles/ImageViewer.module.css";
+import Loader from "./Loader";
 
 const MIN_SCALE = 0.5;
 const ZOOM_FACTOR = 0.1;
@@ -12,6 +13,7 @@ const ImageViewer = memo(function ImageViewer({
   maxZoom = 7,
   markers = [],
   markerBaseSize = 30,
+  onImageLoad,
 }) {
   const containerRef = useRef(null);
   const imageRef = useRef(null);
@@ -240,7 +242,8 @@ const ImageViewer = memo(function ImageViewer({
   const handleImageLoad = useCallback(() => {
     setIsLoading(false);
     setTransform(1, 0, 0);
-  }, [setTransform]);
+    onImageLoad?.();
+  }, [setTransform, onImageLoad]);
 
   const handleImageError = useCallback(() => {
     setIsLoading(false);
@@ -255,7 +258,7 @@ const ImageViewer = memo(function ImageViewer({
     >
       {isLoading && (
         <div className={styles.loadingOverlay}>
-          <p>Loading...</p>
+          <Loader message="Loading image..." />
         </div>
       )}
       {imageError && (
