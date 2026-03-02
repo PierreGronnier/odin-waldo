@@ -69,7 +69,7 @@ Parses the game's `description` field (stored as JSON in the database) and displ
 
 ---
 
-## 🪝 Hooks
+## Hooks
 
 | Hook                   | Purpose                                                                          |
 | ---------------------- | -------------------------------------------------------------------------------- |
@@ -80,7 +80,7 @@ Parses the game's `description` field (stored as JSON in the database) and displ
 
 ---
 
-## 🔌 API Service (`src/services/api.js`)
+## API Service (`src/services/api.js`)
 
 All backend communication goes through a single `ApiService` class instance:
 
@@ -117,7 +117,7 @@ The colour scheme is dark by default (`#0a0a0a` background, `#646cff` accent).
 
 ---
 
-## 📦 Available Scripts
+## Available Scripts
 
 ```bash
 npm run dev       # Start the Vite dev server
