@@ -1,10 +1,10 @@
-# 🖥️ Art Finder — Client
+# Art Finder — Client
 
 React + Vite frontend for the Art Finder photo-tagging game.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -43,7 +43,7 @@ src/
 
 ---
 
-## 🧩 Key Components
+## Key Components
 
 ### `ImageViewer`
 
@@ -98,7 +98,7 @@ All backend communication goes through a single `ApiService` class instance:
 
 ---
 
-## 🎨 Styling
+## Styling
 
 The project uses **CSS Modules** for component-level scoping alongside two global files:
 
@@ -109,7 +109,7 @@ The colour scheme is dark by default (`#0a0a0a` background, `#646cff` accent).
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 | Variable       | Default                 | Description          |
 | -------------- | ----------------------- | -------------------- |
